@@ -1,0 +1,6 @@
+The mod_profiling module for ProFTPD is intended for development purposes
+only; it is designed to work when proftpd was compiled using
+--enable-devel=profile, and to generate process-specific directories for
+containing the gmon.out files.
+
+For further module documentation, see mod_profiling.html.
