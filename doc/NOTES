@@ -1,0 +1,32 @@
+Configuration
+
+  ProfileEngine on|off
+    If configured to 'off', AND PR_DEVEL_PROFILE is defined, then use
+    moncontrol(2) to disable profiling at module init time.
+
+    If PR_DEVEL_PROFILE is defined, then ProfileEngine defaults to 'on'.
+
+  ProfilePath path
+    Configure the directory that will contain the generated gmon.out files.
+
+    For example:
+
+      ProfilePath /path/to/prof
+
+    Then a profiled proftpd process will generate /path/to/prof/<PID>/,
+    and store its gmon.out file in the <PID> directory.
+
+Implementation
+
+On module init, create the ProfilePath directory for the main/daemon process
+and chdir() into it.  This will be used e.g. when compiled with
+--enable-devel=nofork, or when forking.
+
+On session init, create the ProfilePath directory for the session process,
+and chdir() into it.  Note that chroot(2) will affect this; it means that
+the session process' gmon.out file won't appear in the ProfilePath directory.
+(And we don't have a chance to copy/move the generated gmon.out file; would
+using atexit(2) work?)
+
+Thus we need a module-specific configure script, to detect the presence/support
+of moncontrol(2).
