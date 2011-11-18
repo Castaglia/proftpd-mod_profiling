@@ -18,15 +18,18 @@ Configuration
 
 Implementation
 
-On module init, create the ProfilePath directory for the main/daemon process
-and chdir() into it.  This will be used e.g. when compiled with
---enable-devel=nofork, or when forking.
+On module init, create the ProfilePath directory for the main/daemon process;
+chdir() into it in a 'core.shutdown' listener.  This will be used e.g. when
+compiled with --enable-devel=nofork, or when forking.
 
-On session init, create the ProfilePath directory for the session process,
-and chdir() into it.  Note that chroot(2) will affect this; it means that
-the session process' gmon.out file won't appear in the ProfilePath directory.
-(And we don't have a chance to copy/move the generated gmon.out file; would
-using atexit(2) work?)
+On session init, create the ProfilePath directory for the session process;
+chdir() into it in a 'core.exit' listener.  Note that chroot(2) will affect
+this; it means that the session process' gmon.out file won't appear in the
+ProfilePath directory.
+
+And we don't have a chance to copy/move the generated gmon.out file; would
+using atexit(2) work?  Or perhaps using fchdir(2), and opening the ProfilePath
+process directory to get the dirfd, prior to chroot()?
 
 Thus we need a module-specific configure script, to detect the presence/support
 of moncontrol(2).
