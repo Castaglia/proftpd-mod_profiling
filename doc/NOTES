@@ -33,3 +33,32 @@ process directory to get the dirfd, prior to chroot()?
 
 Thus we need a module-specific configure script, to detect the presence/support
 of moncontrol(2).
+
+Miscellaneous
+
+Now, one can have a configure statement such as:
+
+  CFLAGS="-DDEVEL_NO_DAEMON -DDEVEL_NO_FORK -g -pg -a" \
+    LIBS="-pg" ./configure --enable-devel ...
+
+The resulting daemon will only handle one session.  The bb.out and gmon.out
+profiling files will be written to RUN_DIR (e.g. /var/run/proftpd).
+
+Then, to see the call graph info, invoke the following in the directory
+where the gmon.out and bb.out files are:
+
+  gprof /path/to/proftpd
+
+Useful gprof options:
+
+  -b
+  --brief
+
+  -p
+  --flat-profile
+  --no-flat-profile
+
+  -q
+  --graph
+  --no-graph
+
